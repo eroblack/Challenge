@@ -67,14 +67,15 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* --- NOUVO: Dat Evènman an (Fiks) --- */
-        .event-date {
+        /* --- MODIFIE: Dat ak Lè an dirèk --- */
+        .live-clock {
             font-family: 'Arial', sans-serif;
-            font-size: 11px;
-            color: #ccc;
+            font-size: 12px;
+            color: #00f2ea;
             padding-left: 5px;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
+            font-weight: bold;
         }
 
         /* Panel pou Gwo Vòt */
@@ -139,9 +140,8 @@
                 </div>
             </div>
 
-            <div class="event-date">
-                FIN EVÈNMAN: 30 ME 2024
-            </div>
+            <!-- Div sa a pral resevwa dat ak lè a nan JavaScript -->
+            <div id="current-date-time" class="live-clock"></div>
         </div>
 
         <iframe id="main-video-frame" 
@@ -188,6 +188,25 @@
             scoreEl.style.color = "#fff";
             setTimeout(() => scoreEl.style.color = "#00f2ea", 300);
         }
+
+        // --- NOUVO: Fonksyon pou mete dat ak lè an dirèk ---
+        function updateClock() {
+            const now = new Date();
+            
+            // Fòma Dat (Egzanp: 20 me 2026)
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const dateStr = now.toLocaleDateString('ht-HT', options);
+            
+            // Fòma Lè (Egzanp: 18:23:45)
+            const timeStr = now.toLocaleTimeString('ht-HT', { hour12: false });
+            
+            // Afiche yo ansanm
+            document.getElementById('current-date-time').innerText = `${dateStr} — ${timeStr}`;
+        }
+
+        // Kouri fonksyon an chak segonn
+        setInterval(updateClock, 1000);
+        updateClock(); // Kouri l yon premye fwa touswit
     </script>
 
 </body>
