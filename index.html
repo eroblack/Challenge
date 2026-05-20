@@ -3,122 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eroblack Dance Duel Test</title>
+    <title>Eroblack Dance Challenge</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
         
         #header {
             position: absolute; top: 10px; width: 100%; text-align: center; z-index: 100;
-            text-shadow: 0 0 10px #f00; font-weight: 900; font-size: 18px; letter-spacing: 1px;
+            text-shadow: 0 0 10px #000; font-weight: 900; font-size: 18px; color: #fff;
         }
 
         .battle-container { display: flex; width: 100vw; height: 100vh; }
 
         .side {
-            flex: 1; position: relative; border: 0.5px solid #333;
+            flex: 1; position: relative; border: 1px solid #333;
             display: flex; flex-direction: column; justify-content: flex-end;
+            background: #111; /* Koulè fon si videyo a poko chaje */
         }
 
         video {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: 1;
+            object-fit: cover; z-index: 1; cursor: pointer;
+        }
+
+        /* Ti icon play ki parèt nan mitan videyo a */
+        .play-hint {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 5; font-size: 40px; opacity: 0.5; pointer-events: none;
         }
 
         .vote-area {
-            position: relative; z-index: 10; padding: 25px 10px;
+            position: relative; z-index: 10; padding: 30px 10px;
             background: linear-gradient(transparent, rgba(0,0,0,0.9));
             text-align: center;
         }
 
         .vote-btn {
-            background: #ff0050; border: none; color: #fff; padding: 12px 0;
-            width: 80%; border-radius: 50px; font-weight: bold; font-size: 14px;
-            margin-bottom: 5px; cursor: pointer; text-transform: uppercase;
+            background: #ff0050; border: none; color: #fff; padding: 15px 0;
+            width: 90%; border-radius: 10px; font-weight: bold; font-size: 16px;
+            margin-bottom: 10px; cursor: pointer; text-transform: uppercase;
         }
         
         .side-right .vote-btn { background: #00f2ea; color: #000; }
 
-        .vote-count { font-size: 28px; font-weight: 900; }
+        .vote-count { font-size: 30px; font-weight: 900; display: block; }
 
         .vs-tag {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
             z-index: 50; background: #fff; color: #000; font-weight: 900;
-            padding: 10px; border-radius: 50%; border: 3px solid #ff0050; font-style: italic;
+            padding: 10px; border-radius: 50%; border: 3px solid #ff0050;
         }
 
-        .progress-container {
-            position: absolute; bottom: 0; width: 100%; height: 10px;
-            display: flex; z-index: 100; background: #222;
+        .progress-bar {
+            position: absolute; bottom: 0; height: 8px; width: 100%;
+            display: flex; z-index: 100;
         }
-        #bar-left { width: 50%; background: #ff0050; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #bar-right { width: 50%; background: #00f2ea; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #bar-l { width: 50%; background: #ff0050; transition: 0.3s; }
+        #bar-r { width: 50%; background: #00f2ea; transition: 0.3s; }
     </style>
 </head>
 <body>
 
-    <div id="header">KI MOUN KI PI BON?</div>
+    <div id="header">KLIIKE SOU VIDEO POU PLAY</div>
     <div class="vs-tag">VS</div>
 
     <div class="battle-container">
         <div class="side side-left">
-            <video id="vid1" loop muted autoplay playsinline>
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-man-under-multicolored-lights-1237-large.mp4" type="video/mp4">
+            <video id="vid1" loop playsinline onclick="togglePlay(this)">
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
             </video>
+            <div class="play-hint" id="hint1">▶</div>
             <div class="vote-area">
-                <button class="vote-btn" onclick="vote('left')">VOTE GÒCH</button>
-                <div class="vote-count" id="count-left">0</div>
-                <div style="font-size: 11px; color: #ff0050;">@Dancer_Red</div>
+                <span class="vote-count" id="count-l">0</span>
+                <button class="vote-btn" onclick="addVote('l')">VOTE GÒCH</button>
             </div>
         </div>
 
         <div class="side side-right">
-            <video id="vid2" loop muted autoplay playsinline>
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-girl-dancing-happy-in-the-street-42283-large.mp4" type="video/mp4">
+            <video id="vid2" loop playsinline onclick="togglePlay(this)">
+                <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
             </video>
+            <div class="play-hint" id="hint2">▶</div>
             <div class="vote-area">
-                <button class="vote-btn" onclick="vote('right')">VOTE DWAT</button>
-                <div class="vote-count" id="count-right">0</div>
-                <div style="font-size: 11px; color: #00f2ea;">@Dancer_Cyan</div>
+                <span class="vote-count" id="count-r">0</span>
+                <button class="vote-btn" onclick="addVote('r')">VOTE DWAT</button>
             </div>
         </div>
     </div>
 
-    <div class="progress-container">
-        <div id="bar-left"></div>
-        <div id="bar-right"></div>
+    <div class="progress-bar">
+        <div id="bar-l"></div>
+        <div id="bar-r"></div>
     </div>
 
-    <script>
-        let votesLeft = 0;
-        let votesRight = 0;
+<script>
+    let vL = 0;
+    let vR = 0;
 
-        function vote(side) {
-            if(side === 'left') {
-                votesLeft++;
-                document.getElementById('count-left').innerText = votesLeft;
-            } else {
-                votesRight++;
-                document.getElementById('count-right').innerText = votesRight;
-            }
-            updateBar();
+    // Fonksyon pou jwe oswa kanpe videyo a
+    function togglePlay(video) {
+        const hint = video.id === 'vid1' ? document.getElementById('hint1') : document.getElementById('hint2');
+        if (video.paused) {
+            video.play();
+            hint.style.display = 'none';
+        } else {
+            video.pause();
+            hint.style.display = 'block';
         }
+    }
 
-        function updateBar() {
-            let total = votesLeft + votesRight;
-            if(total === 0) return;
-            
-            let pLeft = (votesLeft / total) * 100;
-            let pRight = (votesRight / total) * 100;
-            
-            document.getElementById('bar-left').style.width = pLeft + "%";
-            document.getElementById('bar-right').style.width = pRight + "%";
+    // Fonksyon vòt
+    function addVote(side) {
+        if(side === 'l') {
+            vL++;
+            document.getElementById('count-l').innerText = vL;
+        } else {
+            vR++;
+            document.getElementById('count-r').innerText = vR;
         }
         
-        // Asire videyo yo kòmanse sou mobil
-        window.addEventListener('load', () => {
-            document.getElementById('vid1').play();
-            document.getElementById('vid2').play();
-        });
-    </script>
+        let total = vL + vR;
+        let pL = (vL / total) * 100;
+        let pR = (vR / total) * 100;
+        
+        document.getElementById('bar-l').style.width = pL + "%";
+        document.getElementById('bar-r').style.width = pR + "%";
+    }
+</script>
 </body>
 </html>
