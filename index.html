@@ -1,52 +1,138 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="ht">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mon Site Web</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(120deg, #4facfe, #00f2fe);
-      color: #fff;
-      text-align: center;
-    }
-    header {
-      padding: 50px 20px;
-    }
-    h1 {
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 18px;
-      opacity: 0.9;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 25px;
-      background: #fff;
-      color: #333;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    footer {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-      font-size: 14px;
-      opacity: 0.8;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dance Challenge Duel</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            color: #fff;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        /* Layout Gòch/Dwat */
+        .duel-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .player {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Efè miwa */
+        }
+
+        /* UI Overlay */
+        .overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            z-index: 10;
+        }
+
+        .name {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #0ff;
+        }
+
+        .score-bar {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 20;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #f00;
+        }
+
+        .vs-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 30;
+            background: #f00;
+            color: #fff;
+            padding: 10px;
+            border-radius: 50%;
+            font-style: italic;
+            border: 4px solid #fff;
+        }
+
+        #start-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            padding: 15px 30px;
+            background: #0f0;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body>  <header>
-    <h1>Byenveni sou EROBLACK</h1>
-    <p>Eroblack se lavi</p>
-    <a class="btn" href="#">Klike la</a>
-  </header>  <footer>
-    © 2026 -EROBLACK 4066-8847
-  </footer></body>
+<body>
+
+    <div class="score-bar">DANCE BATTLE</div>
+    <div class="vs-logo">VS</div>
+
+    <div class="duel-container">
+        <div class="player">
+            <video id="localVideo" autoplay playsinline></video>
+            <div class="overlay">
+                <span class="name">@WOU</span>
+            </div>
+        </div>
+
+        <div class="player">
+            <video id="opponentVideo" autoplay playsinline poster="https://via.placeholder.com/400x800?text=Koneksyon..."></video>
+            <div class="overlay">
+                <span class="name">@EROBLACK</span>
+            </div>
+        </div>
+    </div>
+
+    <button id="start-btn" onclick="openCamera()">LANCE CHALLENGE</button>
+
+    <script>
+        async function openCamera() {
+            try {
+                // Mande pèmisyon pou kamera
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                
+                // Mete kouran kamera a nan premye video a
+                const localVideo = document.getElementById('localVideo');
+                localVideo.srcObject = stream;
+
+                // simulation dezyèm moun nan (pou kounye a nou ka mete menm video a oswa yon avatar)
+                const opponentVideo = document.getElementById('opponentVideo');
+                opponentVideo.srcObject = stream; 
+
+                document.getElementById('start-btn').style.display = 'none';
+            } catch (error) {
+                alert("Ou dwe bay pèmisyon kamera pou w ka jwe!");
+                console.error(error);
+            }
+        }
+    </script>
+</body>
 </html>
