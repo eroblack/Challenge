@@ -3,125 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eroblack Battle V3</title>
+    <title>Eroblack Video Selector</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Arial Black', sans-serif; overflow: hidden; touch-action: manipulation; }
-        
-        /* Scoreboard ki byen vizib anlè */
-        .scoreboard {
-            position: absolute; top: 10px; width: 100%; display: flex; 
-            flex-direction: column; align-items: center; z-index: 100; pointer-events: none;
-        }
-        .score-box {
-            background: rgba(0, 0, 0, 0.8); padding: 15px 30px; border-radius: 50px;
-            display: flex; gap: 30px; border: 2px solid #fff;
-        }
-        .score { font-size: 45px; font-weight: 900; min-width: 80px; text-align: center; }
-        #score-l { color: #ff0050; text-shadow: 0 0 15px #ff0050; }
-        #score-r { color: #00f2ea; text-shadow: 0 0 15px #00f2ea; }
-        .vs-mid { font-size: 25px; color: #fff; align-self: center; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Frame Videyo yo */
-        .battle-container { display: flex; width: 100vw; height: 100vh; }
-        
-        .side { 
-            flex: 1; position: relative; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center;
+        /* Bò Gòch: Ti videyo yo */
+        .sidebar {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border-right: 2px solid #333;
+            background: #111;
         }
 
-        /* Koulè background pou w ka wè frame yo menm si video pa chaje */
-        #left-side { background: #300010; border-right: 2px solid #fff; }
-        #right-side { background: #001030; }
-
-        video { width: 100%; height: 100%; object-fit: cover; position: absolute; }
-
-        /* Bouton Audio */
-        .mute-btn {
-            position: absolute; bottom: 50px; z-index: 110; 
-            background: #fff; color: #000; border: none;
-            width: 60px; height: 60px; border-radius: 50%; font-size: 25px;
-            font-weight: bold; cursor: pointer; box-shadow: 0 0 20px rgba(255,255,255,0.5);
+        .thumb-container {
+            flex: 1;
+            position: relative;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: 0.3s;
         }
 
-        /* Efè Tap blan ki vizib anpil */
-        .tap-effect {
-            position: absolute; width: 100px; height: 100px; background: rgba(255,255,255,0.8);
-            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%) scale(0);
-            animation: tapAnim 0.3s ease-out; z-index: 150;
+        .thumb-container:hover, .thumb-container.active {
+            border-color: #ff0050;
+            transform: scale(1.02);
         }
-        @keyframes tapAnim {
-            from { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-            to { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+
+        .thumb-container iframe {
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Anpeche klike anndan iframe a bò gòch la */
+        }
+
+        /* Bò Dwat: Gwo videyo a */
+        .main-view {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #main-video-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .overlay-text {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="scoreboard">
-        <div class="score-box">
-            <span id="score-l" class="score">0</span>
-            <span class="vs-mid">VS</span>
-            <span id="score-r" class="score">0</span>
+    <div class="sidebar">
+        <div class="thumb-container active" onclick="changeVideo('UHZNk5aVw-8', this)">
+            <iframe src="https://www.youtube.com/embed/UHZNk5aVw-8?controls=0&mute=1" frameborder="0"></iframe>
+        </div>
+        
+        <div class="thumb-container" onclick="changeVideo('623Z4Ia9Xzo', this)">
+            <iframe src="https://www.youtube.com/embed/623Z4Ia9Xzo?controls=0&mute=1" frameborder="0"></iframe>
+        </div>
+
+        <div class="thumb-container" onclick="changeVideo('W9nZ6u15yis', this)">
+            <iframe src="https://www.youtube.com/embed/W9nZ6u15yis?controls=0&mute=1" frameborder="0"></iframe>
         </div>
     </div>
 
-    <div class="battle-container">
-        <div class="side" id="left-side" onclick="handleTap(event, 'l')">
-            <video id="vid1" loop muted autoplay playsinline>
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-            </video>
-            <button class="mute-btn" onclick="toggleAudio('vid1', event)">🔇</button>
-        </div>
-
-        <div class="side" id="right-side" onclick="handleTap(event, 'r')">
-            <video id="vid2" loop muted autoplay playsinline>
-                <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
-            </video>
-            <button class="mute-btn" onclick="toggleAudio('vid2', event)">🔇</button>
-        </div>
+    <div class="main-view">
+        <div class="overlay-text">Eroblack Challenge Live</div>
+        <iframe id="main-video-frame" 
+                src="https://www.youtube.com/embed/UHZNk5aVw-8?autoplay=1&mute=0&loop=1&playlist=UHZNk5aVw-8" 
+                allow="autoplay; encrypted-media" 
+                allowfullscreen>
+        </iframe>
     </div>
 
-<script>
-    let vL = 0;
-    let vR = 0;
+    <script>
+        function changeVideo(videoId, element) {
+            // Chanje videyo nan gwo frame nan
+            const mainFrame = document.getElementById('main-video-frame');
+            mainFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}`;
 
-    function handleTap(e, side) {
-        if(side === 'l') {
-            vL++;
-            document.getElementById('score-l').innerText = vL;
-        } else {
-            vR++;
-            document.getElementById('score-r').innerText = vR;
+            // Mete klas "active" la sou sa nou klike a
+            const thumbs = document.querySelectorAll('.thumb-container');
+            thumbs.forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
         }
-        createEffect(e);
-        
-        // Fòse videyo jwe si yo te kanpe
-        document.getElementById('vid1').play();
-        document.getElementById('vid2').play();
-    }
+    </script>
 
-    function toggleAudio(vidId, e) {
-        e.stopPropagation(); // Anpeche vòt lè w klike sou son
-        const v1 = document.getElementById('vid1');
-        const v2 = document.getElementById('vid2');
-        const target = document.getElementById(vidId);
-        
-        v1.muted = true;
-        v2.muted = true;
-        target.muted = false;
-        
-        // Ti alèt pou konnen son an chanje
-        console.log("Son aktive pou: " + vidId);
-    }
-
-    function createEffect(e) {
-        const circle = document.createElement('div');
-        circle.className = 'tap-effect';
-        circle.style.left = e.clientX + 'px';
-        circle.style.top = e.clientY + 'px';
-        document.body.appendChild(circle);
-        setTimeout(() => circle.remove(), 300);
-    }
-</script>
 </body>
 </html>
