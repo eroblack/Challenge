@@ -96,6 +96,7 @@
     </div>
 
     <script>
+        let activeCandidateId = null; 
         let candidateData = {
             "1": { name: "Kandida 1", video: "" },
             "2": { name: "Kandida 2", video: "" }
@@ -106,7 +107,6 @@
             candidateData[id].video = vid;
             document.getElementById('score-' + id).innerText = vot;
             
-            // Preview nan sidebar san autoplay
             if(vid.includes("streamable.com/e/")) {
                 let thumbVid = vid.replace("autoplay=1", "autoplay=0");
                 document.getElementById('vid-thumb-' + id).src = thumbVid;
@@ -116,6 +116,8 @@
         }
 
         function selectCandidate(id) {
+            activeCandidateId = id; // Memorize kilès ki chwazi
+            const nonKandida = candidateData[id].name;
             const vidSource = candidateData[id].video.trim();
             const mainFrame = document.getElementById('main-video-frame');
             
@@ -123,24 +125,31 @@
                 mainFrame.src = vidSource;
             }
             
-            document.getElementById('current-candidate-name').innerText = candidateData[id].name;
+            document.getElementById('current-candidate-name').innerText = nonKandida;
+            
+            // Voye non an bay Sketchware pou jaden anlè a
+            if (typeof Android !== "undefined" && Android.chwaziKandida) {
+                Android.chwaziKandida(id.toString(), nonKandida);
+            }
+
             document.querySelectorAll('.candidate-box').forEach(b => b.classList.remove('active'));
             document.getElementById('box-' + id).classList.add('active');
             togglePanel(true);
         }
 
-        // Fonksyon pou louvri oswa fèmen panel la
         function togglePanel(show) {
             document.getElementById('vote-panel').style.display = show ? 'flex' : 'none';
         }
 
         function boostVote(amount) {
-            if (typeof Android !== "undefined" && Android.voyeKob) {
-                Android.voyeKob("peye", amount.toString());
+            if (activeCandidateId !== null) {
+                if (typeof Android !== "undefined" && Android.voyeKob) {
+                    // Voye ID kandida aktif la ak kantite a
+                    Android.voyeKob(activeCandidateId.toString(), amount.toString());
+                }
             }
         }
 
-        // FONKSYON POU REVÈY LA
         function updateClock() {
             const now = new Date();
             const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
