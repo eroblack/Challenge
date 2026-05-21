@@ -6,28 +6,40 @@
     <title>Eroblack Challenge Live</title>
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: 'Arial Black', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
         .sidebar { width: 30%; display: flex; flex-direction: column; gap: 15px; padding: 15px; border-right: 3px solid #222; background: #0a0a0a; z-index: 20; }
         .candidate-box { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-        .thumb-container { flex: 1; position: relative; cursor: pointer; border: 4px solid #333; border-radius: 12px; overflow: hidden; transition: 0.3s; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: #1a1a1a; }
+        
+        /* Ti bwat videyo sou kote a */
+        .thumb-container { 
+            flex: 1; position: relative; cursor: pointer; border: 4px solid #333; 
+            border-radius: 12px; overflow: hidden; transition: 0.3s; background: #000;
+        }
+        .thumb-container iframe { width: 100%; height: 100%; pointer-events: none; border: none; }
+        
         .candidate-box.active .thumb-container { border-color: #ff0050; box-shadow: 0 0 15px #ff0050; }
+
+        /* Main View */
         .main-view { flex: 1; background: #000; display: flex; position: relative; flex-direction: column; }
         #main-video-frame { width: 100%; height: 100%; border: none; background: #000; }
+
+        /* UI Elements */
         .header-container { position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 100; pointer-events: none; }
         .live-status { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.7); padding: 8px 15px; border-radius: 50px; border: 1px solid #ff0000; width: fit-content; }
         .live-dot { width: 10px; height: 10px; background: #ff0000; border-radius: 50%; animation: blink 1s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        
         #current-candidate-name { background: #ff0050; color: white; padding: 5px 15px; font-size: 18px; border-radius: 5px; margin-top: 5px; display: inline-block; width: fit-content; text-transform: uppercase; pointer-events: auto; }
         .sponsor-bar { background: rgba(255, 0, 80, 0.2); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 5px; overflow: hidden; width: 250px; pointer-events: auto; }
         .sponsor-track { display: flex; white-space: nowrap; animation: scroll-text 10s linear infinite; }
         .sponsor-item { font-size: 12px; color: #00f2ea; margin-right: 30px; font-weight: bold; }
         @keyframes scroll-text { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .live-clock { font-family: 'Arial', sans-serif; font-size: 12px; color: #00f2ea; padding-left: 5px; font-weight: bold; }
+
+        /* Vote Panel */
         .mega-vote-panel { position: absolute; bottom: 20px; right: 20px; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px); padding: 15px; border-radius: 15px; border: 2px solid #ff0050; display: none; flex-direction: column; gap: 10px; width: 240px; z-index: 1000; }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; }
-        .btn-close { background: #444; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
         .vote-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
         .btn-multi { background: #222; color: #fff; border: 1px solid #444; padding: 10px 4px; border-radius: 5px; font-size: 14px; cursor: pointer; font-weight: bold; }
-        .btn-multi:active { background: #ff0050; transform: scale(0.95); }
         .score-row { display: flex; justify-content: space-between; align-items: center; padding: 5px; background: #111; border-radius: 5px; }
         .score-val { color: #00f2ea; font-size: 20px; }
     </style>
@@ -35,12 +47,17 @@
 <body>
 
     <div class="sidebar">
-        <div class="candidate-box" id="box-1">
-            <div class="thumb-container" id="thumb-1" onclick="selectCandidate(1)"></div>
+        <div class="candidate-box" id="box-1" onclick="selectCandidate(1)">
+            <div class="thumb-container">
+                <iframe id="vid-thumb-1" src=""></iframe>
+            </div>
             <div class="score-row"><span>VÒT:</span><span class="score-val" id="score-1">0</span></div>
         </div>
-        <div class="candidate-box" id="box-2">
-            <div class="thumb-container" id="thumb-2" onclick="selectCandidate(2)"></div>
+        
+        <div class="candidate-box" id="box-2" onclick="selectCandidate(2)">
+            <div class="thumb-container">
+                <iframe id="vid-thumb-2" src=""></iframe>
+            </div>
             <div class="score-row"><span>VÒT:</span><span class="score-val" id="score-2">0</span></div>
         </div>
     </div>
@@ -50,11 +67,11 @@
             <div class="live-status"><div class="live-dot"></div><span>🔴 LIVE • EROBLACK CHALLENGE</span></div>
             <div id="current-candidate-name">CHWAZI YON KANDIDA</div>
             <div class="sponsor-bar"><div class="sponsor-track"><span class="sponsor-item" id="sp-text">⭐ SPONSOR: EROBLACK SHOP</span></div></div>
-            <div id="current-date-time" class="live-clock"></div>
         </div>
-        <iframe id="main-video-frame" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        
+        <iframe id="main-video-frame" src="about:blank" allow="autoplay; encrypted-media"></iframe>
+
         <div class="mega-vote-panel" id="vote-panel">
-            <div class="panel-header"><span style="font-size: 12px; color: #aaa;">BOOST VÒT</span><button class="btn-close" onclick="togglePanel(false)">X</button></div>
             <div class="vote-grid">
                 <button class="btn-multi" onclick="boostVote(5)">+5</button>
                 <button class="btn-multi" onclick="boostVote(10)">+10</button>
@@ -68,55 +85,46 @@
 
     <script>
         let candidateData = {
-            "1": { name: "Kandida 1", video: "", photo: "" },
-            "2": { name: "Kandida 2", video: "", photo: "" }
+            "1": { name: "Kandida 1", video: "" },
+            "2": { name: "Kandida 2", video: "" }
         };
 
+        // Nou resevwa videyo a sèlman
         function updateAll(id, non, vot, img, vid) {
-            if (candidateData[id]) {
-                candidateData[id].name = non;
-                candidateData[id].video = vid; // Li resevwa lyen textviewVideo a isit la
-                document.getElementById('score-' + id).innerText = vot;
-                if(img && img.trim() !== "") {
-                    document.getElementById('thumb-' + id).style.backgroundImage = "url('" + img + "')";
-                }
+            candidateData[id].name = non;
+            candidateData[id].video = vid;
+            document.getElementById('score-' + id).innerText = vot;
+            
+            // Mete preview a nan ti bwat la (san autoplay)
+            if(vid.includes("streamable.com/e/")) {
+                // Retire autoplay nan ti preview a pou l pa jwe pou kont li nan sidebar la
+                let thumbVid = vid.replace("autoplay=1", "autoplay=0");
+                document.getElementById('vid-thumb-' + id).src = thumbVid;
+            } else {
+                document.getElementById('vid-thumb-' + id).src = vid;
             }
         }
 
         function selectCandidate(id) {
-            const vidSource = candidateData[id].video;
+            const vidSource = candidateData[id].video.trim();
             const mainFrame = document.getElementById('main-video-frame');
             
-            if(vidSource && vidSource.trim() !== "") {
-                // Si se yon ID YouTube senp (ex: dQw4w9WgXcQ)
-                if(!vidSource.includes("http")) {
-                    mainFrame.src = "https://www.youtube.com/embed/" + vidSource + "?autoplay=1&mute=0&playlist=" + vidSource + "&loop=1";
-                } else {
-                    // Si se yon lyen konplè
-                    mainFrame.src = vidSource;
-                }
+            if(vidSource !== "") {
+                // Isit la nou jwe li ak tout son ak autoplay
+                mainFrame.src = vidSource;
             }
             
             document.getElementById('current-candidate-name').innerText = candidateData[id].name;
             document.querySelectorAll('.candidate-box').forEach(b => b.classList.remove('active'));
             document.getElementById('box-' + id).classList.add('active');
-            togglePanel(true);
+            document.getElementById('vote-panel').style.display = 'flex';
         }
-
-        function togglePanel(show) { document.getElementById('vote-panel').style.display = show ? 'flex' : 'none'; }
 
         function boostVote(amount) {
             if (typeof Android !== "undefined" && Android.voyeKob) {
                 Android.voyeKob("peye", amount.toString());
             }
         }
-
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('current-date-time').innerText = now.toLocaleDateString('en-GB') + " — " + now.toLocaleTimeString('en-GB', { hour12: false });
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
     </script>
 </body>
 </html>
