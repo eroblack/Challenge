@@ -10,9 +10,15 @@
         /* Sidebar */
         .sidebar { width: 30%; display: flex; flex-direction: column; gap: 15px; padding: 15px; border-right: 3px solid #222; background: #0a0a0a; z-index: 20; }
         .candidate-box { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-        .thumb-container { flex: 1; position: relative; cursor: pointer; border: 4px solid #333; border-radius: 12px; overflow: hidden; transition: 0.3s; background-size: cover; background-position: center; }
-        .candidate-box.active .thumb-container { border-color: #ff0050; box-shadow: 0 0 15px #ff0050; }
         
+        /* Ankadreman foto yo - Nou itilize div ak background-image */
+        .thumb-container {
+            flex: 1; position: relative; cursor: pointer; border: 4px solid #333;
+            border-radius: 12px; overflow: hidden; transition: 0.3s;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+        }
+        .candidate-box.active .thumb-container { border-color: #ff0050; box-shadow: 0 0 15px #ff0050; }
+
         /* Main View */
         .main-view { flex: 1; background: #000; display: flex; position: relative; flex-direction: column; }
         #main-video-frame { width: 100%; height: 100%; border: none; }
@@ -31,102 +37,101 @@
         @keyframes scroll-text { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         .live-clock { font-family: 'Arial', sans-serif; font-size: 12px; color: #00f2ea; padding-left: 5px; font-weight: bold; }
+
+        /* Mega Vote Panel */
+        .mega-vote-panel { position: absolute; bottom: 20px; right: 20px; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px); padding: 15px; border-radius: 15px; border: 2px solid #ff0050; display: none; flex-direction: column; gap: 10px; width: 240px; z-index: 1000; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; }
+        .btn-close { background: #444; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
+        .vote-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+        .btn-multi { background: #222; color: #fff; border: 1px solid #444; padding: 8px 4px; border-radius: 5px; font-size: 11px; cursor: pointer; }
+        .btn-multi:hover { background: #ff0050; }
+
         .score-row { display: flex; justify-content: space-between; align-items: center; padding: 5px; background: #111; border-radius: 5px; }
         .score-val { color: #00f2ea; font-size: 20px; }
-        .candidate-name-tag { font-size: 14px; color: #00f2ea; font-weight: bold; text-transform: uppercase; }
-
-        /* Ti Kalandriye / Vote Modal */
-        #vote-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #1a1a1a; padding: 20px; border-radius: 15px; border: 2px solid #ff0050;
-            z-index: 1000; text-align: center; box-shadow: 0 0 30px rgba(255,0,80,0.5);
-        }
-        .vote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .vote-btn { background: #ff0050; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .close-btn { margin-top: 15px; background: #444; color: #ccc; border: none; padding: 5px 10px; border-radius: 5px; font-size: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="vote-modal">
-        <h3 id="modal-title" style="margin:0; font-size:16px;">BOOST VÒT</h3>
-        <div class="vote-grid">
-            <button class="vote-btn" onclick="sendBoost(50)">+50</button>
-            <button class="vote-btn" onclick="sendBoost(75)">+75</button>
-            <button class="vote-btn" onclick="sendBoost(100)">+100</button>
-            <button class="vote-btn" onclick="sendBoost(500)">+500</button>
-        </div>
-        <button class="close-btn" onclick="closeModal()">FÈMEN</button>
-    </div>
-
     <div class="sidebar">
         <div class="candidate-box" id="box-1">
-            <div id="display-name-1" class="candidate-name-tag">Kandida 1</div>
-            <div class="thumb-container" id="img-1" onclick="selectCandidate(1)"></div>
-            <div class="score-row"><span>VÒT:</span><span class="score-val" id="score-1">0</span></div>
+            <div class="thumb-container" id="thumb-1" onclick="selectCandidate(1)"></div>
+            <div class="score-row">
+                <span>VÒT:</span>
+                <span class="score-val" id="score-1">0</span>
+            </div>
         </div>
         
         <div class="candidate-box" id="box-2">
-            <div id="display-name-2" class="candidate-name-tag">Kandida 2</div>
-            <div class="thumb-container" id="img-2" onclick="selectCandidate(2)"></div>
-            <div class="score-row"><span>VÒT:</span><span class="score-val" id="score-2">0</span></div>
+            <div class="thumb-container" id="thumb-2" onclick="selectCandidate(2)"></div>
+            <div class="score-row">
+                <span>VÒT:</span>
+                <span class="score-val" id="score-2">0</span>
+            </div>
         </div>
     </div>
 
     <div class="main-view">
         <div class="header-container">
-            <div class="live-status"><div class="live-dot"></div><span class="live-text">🔴 LIVE • EROBLACK CHALLENGE</span></div>
+            <div class="live-status">
+                <div class="live-dot"></div>
+                <span class="live-text">🔴 LIVE • EROBLACK CHALLENGE</span>
+            </div>
             <div id="current-candidate-name">CHWAZI YON KANDIDA</div>
             <div class="sponsor-bar"><div class="sponsor-track"><span class="sponsor-item" id="sp-text">⭐ SPONSOR: EROBLACK</span></div></div>
             <div id="current-date-time" class="live-clock"></div>
         </div>
+
         <iframe id="main-video-frame" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+        <div class="mega-vote-panel" id="vote-panel">
+            <div class="panel-header">
+                <span style="font-size: 10px; color: #aaa;">BOOST VÒT</span>
+                <button class="btn-close" onclick="togglePanel(false)">X</button>
+            </div>
+            <div class="vote-grid">
+                <button class="btn-multi" onclick="boostVote(5)">+5</button>
+                <button class="btn-multi" onclick="boostVote(10)">+10</button>
+                <button class="btn-multi" onclick="boostVote(25)">+25</button>
+                <button class="btn-multi" onclick="boostVote(50)">+50</button>
+                <button class="btn-multi" onclick="boostVote(100)">+100</button>
+                <button class="btn-multi" onclick="boostVote(500)">+500</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        let candidateNames = {"1": "Kandida 1", "2": "Kandida 2"};
-        let videoLinks = {"1": "", "2": ""};
-        let selectedID = 1;
+        let currentID = 1;
+        let candidateData = {
+            "1": { name: "Kandida 1", video: "" },
+            "2": { name: "Kandida 2", video: "" }
+        };
 
-        function updateNon(id, non) {
-            candidateNames[id] = non;
-            document.getElementById('display-name-' + id).innerText = non;
-        }
-
-        function updateVot(id, kantite) {
-            document.getElementById('score-' + id).innerText = kantite;
-        }
-
-        function updateImaj(id, url) {
-            document.getElementById('img-' + id).style.backgroundImage = `url('${url}')`;
-        }
-
-        function updateSponsor(txt) {
-            document.getElementById('sp-text').innerText = "⭐ SPONSOR: " + txt;
+        // Resevwa done nan men Sketchware
+        function updateAll(id, non, vot, img, vid) {
+            candidateData[id].name = non;
+            candidateData[id].video = vid;
+            document.getElementById('score-' + id).innerText = vot;
+            document.getElementById('thumb-' + id).style.backgroundImage = "url('" + img + "')";
         }
 
         function selectCandidate(id) {
-            selectedID = id;
-            const vId = videoLinks[id];
+            currentID = id;
+            const vid = candidateData[id].video;
             const mainFrame = document.getElementById('main-video-frame');
-            mainFrame.src = `https://www.youtube.com/embed/${vId}?autoplay=1&mute=0&loop=1`;
-            document.getElementById('current-candidate-name').innerText = candidateNames[id];
+            mainFrame.src = "https://www.youtube.com/embed/" + vid + "?autoplay=1&mute=0";
             
+            document.getElementById('current-candidate-name').innerText = candidateData[id].name;
             document.querySelectorAll('.candidate-box').forEach(b => b.classList.remove('active'));
             document.getElementById('box-' + id).classList.add('active');
-
-            // Louvri modal boost la
-            document.getElementById('modal-title').innerText = "BOOST " + candidateNames[id];
-            document.getElementById('vote-modal').style.display = 'block';
+            togglePanel(true);
         }
 
-        function sendBoost(val) {
-            // Rele Java pou fè kalkil la
-            location.href = "vote:" + selectedID + ":" + val;
-            closeModal();
-        }
+        function togglePanel(show) { document.getElementById('vote-panel').style.display = show ? 'flex' : 'none'; }
 
-        function closeModal() { document.getElementById('vote-modal').style.display = 'none'; }
+        function boostVote(amount) {
+            // Voye bay Java
+            location.href = "vote:" + currentID + ":" + amount;
+        }
 
         function updateClock() {
             const now = new Date();
