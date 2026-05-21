@@ -15,28 +15,24 @@
             flex: 1; position: relative; cursor: pointer; border: 4px solid #333;
             border-radius: 12px; overflow: hidden; transition: 0.3s;
             background-size: cover; background-position: center; background-repeat: no-repeat;
+            background-color: #1a1a1a;
         }
         
-        /* Foto Kandida 1 pa defo */
-        #thumb-1 { background-image: url('https://i.ibb.co/jvHKWjZ9/img-K1.jpg'); }
-        /* Foto Kandida 2 pa defo */
-        #thumb-2 { background-image: url('https://i.ibb.co/wrZ770Gv/img-K2.jpg'); }
-
         .candidate-box.active .thumb-container { border-color: #ff0050; box-shadow: 0 0 15px #ff0050; }
 
         /* Main View */
         .main-view { flex: 1; background: #000; display: flex; position: relative; flex-direction: column; }
-        #main-video-frame { width: 100%; height: 100%; border: none; }
+        #main-video-frame { width: 100%; height: 100%; border: none; background: #000; }
 
         /* Header */
-        .header-container { position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .header-container { position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 100; pointer-events: none; }
         .live-status { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.7); padding: 8px 15px; border-radius: 50px; border: 1px solid #ff0000; width: fit-content; }
         .live-dot { width: 10px; height: 10px; background: #ff0000; border-radius: 50%; animation: blink 1s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         
-        #current-candidate-name { background: #ff0050; color: white; padding: 5px 15px; font-size: 18px; border-radius: 5px; margin-top: 5px; display: inline-block; width: fit-content; text-transform: uppercase; }
+        #current-candidate-name { background: #ff0050; color: white; padding: 5px 15px; font-size: 18px; border-radius: 5px; margin-top: 5px; display: inline-block; width: fit-content; text-transform: uppercase; pointer-events: auto; }
 
-        .sponsor-bar { background: rgba(255, 0, 80, 0.2); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 5px; overflow: hidden; width: 250px; }
+        .sponsor-bar { background: rgba(255, 0, 80, 0.2); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 5px; overflow: hidden; width: 250px; pointer-events: auto; }
         .sponsor-track { display: flex; white-space: nowrap; animation: scroll-text 10s linear infinite; }
         .sponsor-item { font-size: 12px; color: #00f2ea; margin-right: 30px; font-weight: bold; }
         @keyframes scroll-text { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
@@ -48,8 +44,8 @@
         .panel-header { display: flex; justify-content: space-between; align-items: center; }
         .btn-close { background: #444; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
         .vote-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-        .btn-multi { background: #222; color: #fff; border: 1px solid #444; padding: 8px 4px; border-radius: 5px; font-size: 11px; cursor: pointer; }
-        .btn-multi:hover { background: #ff0050; }
+        .btn-multi { background: #222; color: #fff; border: 1px solid #444; padding: 10px 4px; border-radius: 5px; font-size: 14px; cursor: pointer; font-weight: bold; }
+        .btn-multi:active { background: #ff0050; transform: scale(0.95); }
 
         .score-row { display: flex; justify-content: space-between; align-items: center; padding: 5px; background: #111; border-radius: 5px; }
         .score-val { color: #00f2ea; font-size: 20px; }
@@ -90,7 +86,7 @@
 
         <div class="mega-vote-panel" id="vote-panel">
             <div class="panel-header">
-                <span style="font-size: 10px; color: #aaa;">BOOST VÒT</span>
+                <span style="font-size: 12px; color: #aaa; font-weight: bold;">BOOST VÒT</span>
                 <button class="btn-close" onclick="togglePanel(false)">X</button>
             </div>
             <div class="vote-grid">
@@ -107,43 +103,65 @@
     <script>
         let currentID = 1;
         let candidateData = {
-            "1": { name: "Kandida 1", video: "" },
-            "2": { name: "Kandida 2", video: "" }
+            "1": { name: "Kandida 1", video: "", photo: "" },
+            "2": { name: "Kandida 2", video: "", photo: "" }
         };
 
+        // Fonksyon sa a resevwa enfòmasyon ki soti nan Android
         function updateAll(id, non, vot, img, vid) {
-            candidateData[id].name = non;
-            candidateData[id].video = vid;
-            document.getElementById('score-' + id).innerText = vot;
-            if(img && img !== "") {
-                document.getElementById('thumb-' + id).style.backgroundImage = "url('" + img + "')";
+            if (candidateData[id]) {
+                candidateData[id].name = non;
+                candidateData[id].video = vid;
+                candidateData[id].photo = img;
+                
+                document.getElementById('score-' + id).innerText = vot;
+                
+                if(img && img.trim() !== "") {
+                    document.getElementById('thumb-' + id).style.backgroundImage = "url('" + img + "')";
+                }
             }
+        }
+
+        // Chanje Sponsor a distans
+        function updateSponsor(text) {
+            document.getElementById('sp-text').innerText = "⭐ SPONSOR: " + text;
         }
 
         function selectCandidate(id) {
             currentID = id;
-            const vid = candidateData[id].video;
+            const vidID = candidateData[id].video;
             const mainFrame = document.getElementById('main-video-frame');
-            if(vid !== "") {
-                mainFrame.src = "https://www.youtube.com/embed/" + vid + "?autoplay=1&mute=0&playlist=" + vid + "&loop=1";
+            
+            if(vidID && vidID.trim() !== "") {
+                // Si se yon ID YouTube sèlman
+                mainFrame.src = "https://www.youtube.com/embed/" + vidID + "?autoplay=1&mute=0&playlist=" + vidID + "&loop=1";
             }
             
             document.getElementById('current-candidate-name').innerText = candidateData[id].name;
+            
+            // Aktive vizaèlman bwat la
             document.querySelectorAll('.candidate-box').forEach(b => b.classList.remove('active'));
             document.getElementById('box-' + id).classList.add('active');
+            
+            // Louvri panel vote la
             togglePanel(true);
         }
 
-        function togglePanel(show) { document.getElementById('vote-panel').style.display = show ? 'flex' : 'none'; }
+        function togglePanel(show) { 
+            document.getElementById('vote-panel').style.display = show ? 'flex' : 'none'; 
+        }
 
+        // KOUNYE A: Sa ap voye valè a sèlman nan Android pou EdittextPeye
         function boostVote(amount) {
-            location.href = "vote:" + currentID + ":" + amount;
+            // Nou voye "boost:VALÈ" pou Android ka dekoupe li fasil
+            location.href = "boost:" + amount;
         }
 
         function updateClock() {
             const now = new Date();
             document.getElementById('current-date-time').innerText = now.toLocaleDateString('en-GB') + " — " + now.toLocaleTimeString('en-GB', { hour12: false });
         }
+        
         setInterval(updateClock, 1000);
         updateClock();
     </script>
