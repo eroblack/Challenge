@@ -106,7 +106,6 @@
             candidateData[id].video = vid;
             document.getElementById('score-' + id).innerText = vot;
             
-            // Preview nan sidebar san autoplay
             if(vid.includes("streamable.com/e/")) {
                 let thumbVid = vid.replace("autoplay=1", "autoplay=0");
                 document.getElementById('vid-thumb-' + id).src = thumbVid;
@@ -126,10 +125,13 @@
             document.getElementById('current-candidate-name').innerText = candidateData[id].name;
             document.querySelectorAll('.candidate-box').forEach(b => b.classList.remove('active'));
             document.getElementById('box-' + id).classList.add('active');
+            
+            // CHWAZI KANDIDA A AP METE OK NAN VÒT LA
+            document.getElementById('score-' + id).innerText = 'OK';
+            
             togglePanel(true);
         }
 
-        // Fonksyon pou louvri oswa fèmen panel la
         function togglePanel(show) {
             document.getElementById('vote-panel').style.display = show ? 'flex' : 'none';
         }
@@ -140,7 +142,6 @@
             }
         }
 
-        // FONKSYON POU REVÈY LA
         function updateClock() {
             const now = new Date();
             const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
