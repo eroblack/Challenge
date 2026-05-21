@@ -75,7 +75,7 @@
         function updateAll(id, non, vot, img, vid) {
             if (candidateData[id]) {
                 candidateData[id].name = non;
-                candidateData[id].video = vid;
+                candidateData[id].video = vid; // Li resevwa lyen textviewVideo a isit la
                 document.getElementById('score-' + id).innerText = vot;
                 if(img && img.trim() !== "") {
                     document.getElementById('thumb-' + id).style.backgroundImage = "url('" + img + "')";
@@ -84,10 +84,19 @@
         }
 
         function selectCandidate(id) {
-            const vidID = candidateData[id].video;
-            if(vidID) {
-                document.getElementById('main-video-frame').src = "https://www.youtube.com/embed/" + vidID + "?autoplay=1&mute=0&playlist=" + vidID + "&loop=1";
+            const vidSource = candidateData[id].video;
+            const mainFrame = document.getElementById('main-video-frame');
+            
+            if(vidSource && vidSource.trim() !== "") {
+                // Si se yon ID YouTube senp (ex: dQw4w9WgXcQ)
+                if(!vidSource.includes("http")) {
+                    mainFrame.src = "https://www.youtube.com/embed/" + vidSource + "?autoplay=1&mute=0&playlist=" + vidSource + "&loop=1";
+                } else {
+                    // Si se yon lyen konplè
+                    mainFrame.src = vidSource;
+                }
             }
+            
             document.getElementById('current-candidate-name').innerText = candidateData[id].name;
             document.querySelectorAll('.candidate-box').forEach(b => b.classList.remove('active'));
             document.getElementById('box-' + id).classList.add('active');
@@ -96,14 +105,9 @@
 
         function togglePanel(show) { document.getElementById('vote-panel').style.display = show ? 'flex' : 'none'; }
 
-        // --- MEN KOTE PWOBLÈM LAN TE YE A ---
         function boostVote(amount) {
-            // Nou rele interface "Android" ou a dirèkteman
-            if (typeof Android !== "undefined") {
-                // Nou voye "peye" kòm premye paramèt, epi valè a kòm dezyèm
+            if (typeof Android !== "undefined" && Android.voyeKob) {
                 Android.voyeKob("peye", amount.toString());
-            } else {
-                console.log("Interface Android pa jwenn!");
             }
         }
 
